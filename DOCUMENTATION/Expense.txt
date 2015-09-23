@@ -1,0 +1,9 @@
+09/22/15
+Created 3 files: Main.py, Database.py, and ExpenseClass.py.
+
+Main.py: This file is in charge of bringing all of the files together. From here, you can assign an item a name, and a type.Depending on the type, the item can have different characteristics. 
+
+Database.py: This file contains the class InventoryDatabase. This has three functions: To create the database, to modify the
+database, and to read the database. 
+
+ExpenseClass.py: This file contains the class Inventory. 
