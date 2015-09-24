@@ -13,17 +13,22 @@ import sqlite3       #imports database library
 
 class records:#Records class that takes information and stores/removes information
     
-    database = sqlite3.connect('records_information.db');#connects to database
-    c = database.cursor();
-    #c.execute('''CREATE TABLE employees(id INTEGER PRIMARY KEY, name TEXT,phone TEXT, job_type TEXT, email TEXT ) ''');
-    #database.commit();
-    c = database.cursor();                 #Drops table created
-    c.execute('''DROP TABLE employees'''); #     ........
-    database.commit();                     #     ........
-    database.close();#closes the database
-
-    #def _init_(self):
+    def _init_(self, daily, monthly, yearly):
         #
+
+    def create_database_entry():
+        database = sqlite3.connect('records_information.db');#connects to database
+        c = database.cursor();
+        c.execute('''CREATE TABLE employees(id INTEGER PRIMARY KEY, name TEXT,phone TEXT, job_type TEXT, email TEXT ) ''');
+        database.commit();
+        database.close();
+        
+    def drop_data_base():
+        c = database.cursor();                 #Drops table created
+        c.execute('''DROP TABLE employees'''); #     ........
+        database.commit();                     #     ........
+        database.close();#closes the database
+
     def store_employee(id_num, employee_name, phone, job_t, email):#stores employee into database
         database = sqlite3.connect('records_information.db');
         c = database.cursor();
