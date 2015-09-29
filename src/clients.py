@@ -19,14 +19,13 @@ class clients:
         c = client_database.cursor();
         
         #creating table
-        c.execute('''CREATE TABLE customers
-                            (name, company, phone, email, product, quantity)''')
+        c.execute('''CREATE TABLE customers (Id INT, name TEXT, company TEXT, phone TEXT, email TEXT, product TEXT, quantity TEXT)''')
 
         client_database.commit();
         client_database.close();
 
-    #dropping table
-    def drop_database():
+    #delete table
+    def delete_database():
         c=client_database.cursor();
         c.execute('''DROP TABLE customers''');
         client_database.commit();
@@ -37,7 +36,7 @@ class clients:
         client_database = sqlite3.connect('client_data.db');
         c=client_database.cursor();
 
-        c.execute('''INSERT INTO customers (name, company, phone, email)''',(name, company, phone, email));
+        c.execute('''INSERT INTO customers (ID ,name, company, phone, email)''',(ID, name, company, phone, email));
         print("Client info entered");
         client_database.commit();
         client_database.close();
@@ -46,13 +45,13 @@ class clients:
 
     def retrieve_client_data(customers):
         client_database = sqlite3.connect('client_data.db');
-        c.execute('''SELECT name, company, phone, email FROM customers''');
+        c.execute('''SELECT ID, name, company, phone, email FROM customers''');
         c=client_database.cursor();
         customers=c.fetchall();
         return customers;
             
         
-    def store_sales_info (name, company, product, quantity):
+    def store_sales_info (ID, name, company, product, quantity):
         client_database = sqlite3.connect('client_data.db');
         c=client_database.cursor();
         c.execute('''INSERT INTO customers(product, quantity)''', (product, quantity));
@@ -64,7 +63,7 @@ class clients:
 
     def retrieve_sales_info (sales):
         client_database=sqlite3.connect('client_data.db');
-        c.execute('''Select name, company, phone, email, product, quantity FROM customers''');
+        c.execute('''Select ID, name, company, phone, email, product, quantity FROM customers''');
         c=client_database.cursor();
         sales=c.fetchall();
         return sales;
