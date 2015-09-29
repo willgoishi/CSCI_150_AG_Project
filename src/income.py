@@ -1,4 +1,4 @@
-class Employees:
+class Income:
     def __init__(self, month):
         self.month = month
         self.item = item
