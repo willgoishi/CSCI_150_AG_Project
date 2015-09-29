@@ -8,7 +8,7 @@
 #clients denotes class  #customer=individual clients
 
 import sys;
-from tkinter import
+from tkinter import*
 import sqlite3
 
 class clients:
