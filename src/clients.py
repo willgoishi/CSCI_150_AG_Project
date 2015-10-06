@@ -19,23 +19,23 @@ class clients:
         c = client_database.cursor();
         
         #creating table
-        c.execute('''CREATE TABLE customers (Id INT, name TEXT, company TEXT, phone TEXT, email TEXT, product TEXT, quantity TEXT)''')
+        c.execute('''CREATE TABLE customers (ID INT, name TEXT, company TEXT, phone TEXT, email TEXT, product TEXT, quantity TEXT)''')
 
         client_database.commit();
         client_database.close();
 
     #delete table
     def delete_database():
+        client_database=sqlite3.connect('client_data.db');
         c=client_database.cursor();
         c.execute('''DROP TABLE customers''');
         client_database.commit();
         client_database.close();
     
     #stores client info in database (add client)
-    def store_client_info(name, company, phone, email):
+    def store_client_info(ID, name, company, phone, email):
         client_database = sqlite3.connect('client_data.db');
         c=client_database.cursor();
-
         c.execute('''INSERT INTO customers (ID ,name, company, phone, email)''',(ID, name, company, phone, email));
         print("Client info entered");
         client_database.commit();
@@ -43,7 +43,7 @@ class clients:
 
         customers = [];
 
-    def retrieve_client_data(customers):
+    def retrieve_client_data():
         client_database = sqlite3.connect('client_data.db');
         c.execute('''SELECT ID, name, company, phone, email FROM customers''');
         c=client_database.cursor();
