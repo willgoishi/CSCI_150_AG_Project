@@ -36,7 +36,7 @@ class clients:
     def store_client_info(ID, name, company, phone, email):
         client_database = sqlite3.connect('client_data.db');
         c=client_database.cursor();
-        c.execute('''INSERT INTO customers (ID ,name, company, phone, email)''',(ID, name, company, phone, email));
+        c.execute('''INSERT INTO customers (ID ,name, company, phone, email) VALUES(?,?,?,?,?)''',(ID, name, company, phone, email));
         print("Client info entered");
         client_database.commit();
         client_database.close();
