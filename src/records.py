@@ -83,4 +83,46 @@ class records:#Records class that takes information and stores/removes informati
         c.execute(''' INSERT INTO sale(id, Sale_type, quantity, price_per, cost, year) VALUES (?,?,?,?,?,?)''', (sale_num, sale_type, quantity, price, total_cost, year));
         database.commit();    
         database.close();    #closes database
+        
+     def compare_sales_records():#Allows comparison between different years of sales
+        
+        def calculate_cost(cost_list): #calculates cost and acts as a helper function to calculate total costs of a given year 
+            total_cost = 0;                             #sets total cost to zero
+            for x in cost_list:                         #iterates through array to obtain all the costs
+                total_cost = total_cost + x;                #adds costs up and stores them into total_cost
+            return total_cost;                          #returns the total_cost <used later for comparison>
+        
+        database = sqlite3.connect('records_information_sales.db');    #Opens Database <sales_information>
+
+        controller = database.cursor();
+        id_num = []         #Array to store id numbers
+        year_sales = [];    #Array to store years that items were sold
+        sale_costs = [];    #Array to store the cost of sales <used for processing sales totals>
+        
+        database_sales = database.execute('SELECT id, cost, year FROM sale ');#selects the three info_types <id,cost,year> from database sale <retrieves the data>
+        for row in database_sales:        #iterates through selected info from database by row  
+            id_num.append(row[0]);          #Stores first line of info <id numbers> and stores them in the id_num array
+            sale_costs.append(row[1]);      #Stores second line of info <costs> and stores them into the sale_costs array
+            year_sales.append(row[2]);      #Stores third line of info <years> and stores them into the year_sales array
+            
+        n = 0;
+        m = n+1;
+        while n<len(id_num):
+            cost = sale_costs[n];
+            for x in id_num:
+                while n < len(id_num) and m < len(id_num):
+                    if year_sales[n] == year_sales[m]:
+                        cost = cost + sale_costs[m];
+                    else:
+                        print();
+                
+                    m += 1;
+            print("Year:",year_sales[n],"Total_Income: $",cost); 
+            n += 1;
+
+               
+        print("Cost for all years in Database:","$",calculate_cost (sale_costs));    #Prints the total of the costs in the array
+        database.commit(); #commits all actions related to the database
+
+        database.close();    #closes database
 
