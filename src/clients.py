@@ -45,8 +45,8 @@ class clients:
 
     def retrieve_client_data():
         client_database = sqlite3.connect('client_data.db');
-        c.execute('''SELECT ID, name, company, phone, email FROM customers''');
         c=client_database.cursor();
+        c.execute('''SELECT ID, name, company, phone, email FROM customers''');
         customers=c.fetchall();
         return customers;
             
