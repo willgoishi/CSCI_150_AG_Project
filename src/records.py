@@ -105,22 +105,29 @@ class records:#Records class that takes information and stores/removes informati
             sale_costs.append(row[1]);      #Stores second line of info <costs> and stores them into the sale_costs array
             year_sales.append(row[2]);      #Stores third line of info <years> and stores them into the year_sales array
             
-        n = 0;
-        m = n+1;
-        while n<len(id_num):
-            cost = sale_costs[n];
-            for x in id_num:
-                while n < len(id_num) and m < len(id_num):
-                    if year_sales[n] == year_sales[m]:
-                        cost = cost + sale_costs[m];
-                    else:
-                        print();
+        n = 0;                   #n is declared to zero value and used for place holder for first iteration
+        m = n+1;                 #m equals n + 1 and is used for the second value iteration 
+        record = [];             #Records array called
+        
+        while n<len(id_num):                                 #While n is less than the length of id_num array, will...
+            
+            cost = sale_costs[n];                            #...initialize cost to the value of sale_costs[n]...from array above
+            while n < (len(id_num)) and m < (len(id_num)):   #While length of n and m are both less than id_num length can continue through and then increment m
+                if year_sales[n] == year_sales[m]:               #Checks if a year at <n> is equal to a year at <m> which is the next year in the list of year_sales
+                    cost = cost + sale_costs[m];                   #If so then will add that m value sale_costs to the total which is called <cost> 
+                else:                                            #else will do nothing
+                    print();
+            
+                m += 1;                                          #increments <m> so that it can loop again in the while statement and traverse through the list checking for equal years
                 
-                    m += 1;
-            print("Year:",year_sales[n],"Total_Income: $",cost); 
-            n += 1;
+            if not (year_sales[n] in record):                           ##This checks whether we printed a year already by storing years in a list then checking if they are in the list or not
+                print("Year:",year_sales[n],"Total_Income: $",cost);          #prints the year and the total sum of the income
+                record.append(year_sales[n]);                                 #appends the year to the array <record>
+                #print(record);
 
-               
+            n += 1;                                              #increments <n> then goes back to the main loop to then traverse the list through <m> value
+            m = n + 1;                                           #re-initializes <m> value back to n + 1 otherwise it'll stay at <4> which causes a logical error
+            
         print("Cost for all years in Database:","$",calculate_cost (sale_costs));    #Prints the total of the costs in the array
         database.commit(); #commits all actions related to the database
 
