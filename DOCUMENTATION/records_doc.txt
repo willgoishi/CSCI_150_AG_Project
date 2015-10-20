@@ -1,0 +1,11 @@
+## Records Python file
+
+#Records
+    #1:Records employees and sales into databases
+        available functions that are used to create and delete databases
+    #2:Creates a record of sales for each year
+        storage functions are available to store the sales with the dates and other information
+    #3:Creates a comparison model so that yearly income can be compared and contrasted
+        A function is available that will print out the total sales of each year and then give an overall comparison of what was made during each differing year
+ Records.py file will be called into the main gui file which will be used for purposes of GUI development/integration         
+       
