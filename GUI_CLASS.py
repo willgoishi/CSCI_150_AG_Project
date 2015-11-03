@@ -17,7 +17,7 @@ from incomeDB import incomeDB                 #imports income database class
 from records import records                   #imports python file with records class
 
 class GUI(Frame):   #gui application that builds the agriculture graphical interface
- def __init__(self,main=None):                    #function init that sets itself as self and main as the master branch set to None
+    def __init__(self,main=None):                    #function init that sets itself as self and main as the master branch set to None
         Frame.__init__(self,main);                   #Library function Frame is called to produce the frame and initializing the main page
         self.main = main;                            #sets self.main equal to main
         self.initialize_GUI();                       #self is not calling to the <initialize_GUI> function below to set all the buttons and links
