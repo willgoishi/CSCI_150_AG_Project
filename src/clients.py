@@ -142,4 +142,25 @@ class clients:
                 else: i=i+1;
 
         
-        
+    def delete_client(delete_name):
+        client_database=sqlite3.connect('client_data.db');
+        c=client_database.cursor();
+        answer=input("ARE YOU SURE YOU WANT TO DELETE CLIENT: " + delete_name + "?\n");
+        if(answer == "yes"):
+            c.execute('''DELETE FROM customers WHERE name=(?) ''', [delete_name]);
+            print("DELETED: ", delete_name, "FROM DATABASE");
+            client_database.commit();
+            client_database.close();
+        else: print("DELETE CANCELLED");
+
+
+    def delete_product(title, delete_prod):
+        client_database=sqlite3.connect('client_data.db');
+        c=client_database.cursor();
+        answer=input("ARE YOU SURE YOU WANT TO DELETE PRODUCT: " +delete_prod + "?\n");
+        if(answer == "yes"):
+            c.execute('''DELETE FROM ''' + title +''' WHERE product=(?) ''', [delete_prod]);
+            print("PRODUCT:", delete_prod, "DELETED FROM RECORD");
+        else: print("DELETE CANCELLED");
+
+
