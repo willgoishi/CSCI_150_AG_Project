@@ -161,6 +161,8 @@ class clients:
         if(answer == "yes"):
             c.execute('''DELETE FROM ''' + title +''' WHERE product=(?) ''', [delete_prod]);
             print("PRODUCT:", delete_prod, "DELETED FROM RECORD");
+            client_database.commit();
+            client_database.close();
         else: print("DELETE CANCELLED");
 
 
