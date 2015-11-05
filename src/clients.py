@@ -117,6 +117,29 @@ class clients:
             else: i=i+1;
 
 
+    def searchbyprod(searchproduct):
+        print("PRODUCT SEARCH:", searchproduct);
+        namearray=[];
+        prodtest="empty";
+        i=0;
+        client_database=sqlite3.connect('client_data.db');
+        c=client_database.cursor();
+        c.execute('''SELECT name FROM customers''');
+        namevar=c.fetchall();
+        for row in namevar:
+            namearray.append(row[0]);
+            length=len(namearray);
+        while(i<length):
+            c.execute('''SELECT product FROM ''' + namearray[i] +''' ''');
+            prodvar=c.fetchone();
+            for row in prodvar:
+                if row==searchproduct:
+                    print(namearray[i]); c.execute('''SELECT product, quantity FROM ''' + namearray[i] + ''' ''');
+                    quantvar=c.fetchone();
+                    for row in quantvar:
+                        print(row);
+                    i=i+1;
+                else: i=i+1;
 
         
         
