@@ -13,8 +13,10 @@ import sqlite3       #imports database library
 
 class records:#Records class that takes information and stores/removes information
     
-    def _init_(self, daily, monthly, yearly):
-        #
+    def __init__(self, day, month, year): #Initiates Time factors for Records Class
+        self.day = None;
+        self.month = None;
+        self.year = None;
 
     def create_database_employees():
         database = sqlite3.connect('records_information_employees.db');#connects to database employees
