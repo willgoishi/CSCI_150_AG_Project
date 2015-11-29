@@ -1,168 +1,161 @@
-
-#Clients on Python
-    #Creates client profile -> name, company, phone number, email
-        #what they purchase -> what item(s) && quantity
-    #Finds trends in their purchases
+#IMPORTANT: NEW CLIENTS CODE -> SOME SYNTAX IN ORIGINAL COULD NOT BE READ BY TKINTER -> ISSUE FOUND ON 11/17/15
+#UPLOADED TO GITHUB ON: 11/29/15
 
 
-#clients denotes class  #customer=individual clients
+#Clients
+    #Creates client profile -> ID, name, phone number, email
+    #what they purchase -> ID(num), date, name, product, quantity 
+
+
+#clients denotes class  #customer=table(database)
+                        #sales=table(database)
 
 import sys;
 from tkinter import*
 import sqlite3
 
 class clients:
+
     
-    #create database
+    #create customers database
     def create_database():
         client_database = sqlite3.connect('client_data.db');
         c = client_database.cursor();
         
-        #creating table
+        #creating customers table
         c.execute('''CREATE TABLE customers (ID INT, name TEXT, phone TEXT, email TEXT)''')
+
         client_database.commit();
         client_database.close();
+        print("NEW DATABASE CREATED\n"); 
 
-    #delete table
+
+        
+    #creates the sales database <- contains id(called num) , date, name, product, quantity
+    def create_sales_db():
+        sales_db= sqlite3.connect('sales_data.db');
+        c=sales_db.cursor();
+        #creating sales table
+        c.execute('''CREATE TABLE sales (num INT, date TEXT, name TEXT, product TEXT, quantity INT)''');
+        sales_db.commit();
+        sales_db.close();
+        print("SALES DATABASE CREATED\n");
+
+    #delete customer table
     def delete_database():
         client_database=sqlite3.connect('client_data.db');
         c=client_database.cursor();
         c.execute('''DROP TABLE customers''');
         client_database.commit();
         client_database.close();
+
+    #delete sales table
+    def delete_sales_db():
+        sales_db=sqlite3.connect('sales_data.db');
+        c=sales_db.cursor();
+        c.execute('''DROP TABLE sales''');
+        sales_db.commit();
+        sales_db.close();
     
-    def delete_table(choice):
-        client_database=sqlite3.connect('client_data.db');
-        c=client_database.cursor();
-        c.execute('''DROP TABLE ''' + choice + ''' ''');
-        client_database.commit();
-        client_database.close();
-    
-    #stores client info in database (add client)
-    #stores client info in database (add client)
+    #stores client info in database = adds client -> takes in name, phone, email
     def store_client_info(ID, name, phone, email):
         client_database = sqlite3.connect('client_data.db');
         c=client_database.cursor();
         c.execute('''INSERT INTO customers (ID ,name, phone, email) VALUES(?,?,?,?)''',(ID, name, phone, email));
-        print("CLIENT INFO ENTERED:", name);
-        c.execute('''CREATE TABLE '''+ name +'''(product TEXT, quantity INT)''')
-        print("PURCHASE TABLE CREATED:", name);
+        print("\nCLIENT INFO ENTERED:", name);
         client_database.commit();
         client_database.close();
 
         customers = [];
-
+#retrieves all client information
     def retrieve_client_data():
         client_database = sqlite3.connect('client_data.db');
         c=client_database.cursor();
         c.execute('''SELECT ID, name, phone, email FROM customers''');
         customers=c.fetchall();
-        print("RETRIEVING CLIENT DATA:");
+        print("\nRETRIEVING CLIENT DATA:");
         for row in customers: print(row);
         return customers;
+    
+#retrieves all sales information
+    def retrieve_all_sales():
+        sales_db=sqlite3.connect('sales_data.db');
+        c=sales_db.cursor();
+        c.execute('''SELECT num, date, name, product, quantity FROM sales''');
+        all_sales=c.fetchall();
+        print("\nRETRIEVING ALL SALES DATA: ");
+        for row in all_sales: print(row);
+        return all_sales;
             
-        
-          
-    def store_sales_info (name, product, quantity):
-        client_database = sqlite3.connect('client_data.db');
-        c=client_database.cursor();
-        c.execute('''INSERT INTO ''' + name+ '''(product, quantity) VALUES(?,?)''',(product, quantity));
-        print("PURCHASE INFO ENTERED:", name);
-        client_database.commit();
-        client_database.close();
-        
-        sales = [];
-        
-    def retrieve_sales_info (choice):
-        client_database=sqlite3.connect('client_data.db');
-        c=client_database.cursor();
-        c.execute('''SELECT product, quantity FROM ''' + choice +''' ''');
-        sales=c.fetchall();
-        print("RETRIEVING SALES INFO:", choice);
-        for row in sales: print(row);
-        return sales;
+
+#stores enteres information into one entry in the sales db
+    def store_sales_info(num, date, name, product, quantity):
+            sales_db=sqlite3.connect('sales_data.db');
+            c=sales_db.cursor();
+            c.execute('''INSERT INTO sales (num, date, name, product, quantity) VALUES(?,?,?,?,?)''',(num, date, name, product, quantity));
+            print("\nSALES INFO ENTERED: ", num, name, product, quantity);
+            sales_db.commit();
+            sales_db.close();
+
+#retrieves all sales information in the sales db that contain tha matching roduct name
+    def retrieve_sales_info(choice):
+        print("\nRETRIEVING SALES INFO FOR:", choice);
+        sales_db=sqlite3.connect('sales_data.db');
+        c=sales_db.cursor();
+        c.execute('''SELECT num, date, name, product, quantity FROM sales WHERE name=(?)''',[choice]);
+        searchvar=c.fetchall();
+        for row in searchvar:
+            print(row);
 
 
+
+#retrieves the client information in the clients db that has the matching name
     def retrieve_one_client(n):
-        print("RETRIEVING ONE CLIENT:", n);
+        print("\nRETRIEVING ONE CLIENT:", n);
         client_database=sqlite3.connect('client_data.db');
         c=client_database.cursor();
         c.execute('''SELECT ID, name, phone, email FROM customers WHERE name=(?) ''', [n]);
         searchvar=c.fetchall();
         for row in searchvar:
             print(row);
-    
+
+
+#searches for all information in the clients and sales db that contain the matching name
     def search(searchname):
-        namearray=[];
+        print("\nSEARCHING FOR:", searchname);
         client_database=sqlite3.connect('client_data.db');
+        sales_db=sqlite3.connect('sales_data.db');
         c=client_database.cursor();
-        c.execute('''SELECT ID, name, phone, email FROM customers''');
+        d=sales_db.cursor();
+        c.execute('''SELECT ID, name, phone, email FROM customers WHERE name=(?) ''', [searchname]);
         searchvar=c.fetchall();
         for row in searchvar:
-            namearray.append(row[1]);
-        i=0;
-        length=len(namearray);
-        while(i<length):
-            if(namearray[i]==searchname):
-                print("SEARCH FOUND:", namearray[i]);
-                c.execute('''SELECT ID, name, phone, email FROM customers WHERE name=(?) ''', [namearray[i]]);
-                searchvar=c.fetchall();
-                for row in searchvar:
-                    print(row);
-                c.execute('''SELECT product, quantity FROM ''' + namearray[i] +''' ''');
-                sales=c.fetchall();
-                for row in sales:
-                    print(row);
-                i=i+1;
-            else: i=i+1;
+            print(row);
+        d.execute('''SELECT num, date, product, quantity FROM sales WHERE name=(?)''', [searchname]);
+        found_sales=d.fetchall();
+        for row in found_sales:
+            print(row);
 
-
+# searches for all information in sales db that contain the matching product name
     def searchbyprod(searchproduct):
-        print("PRODUCT SEARCH:", searchproduct);
-        namearray=[];
-        prodtest="empty";
-        i=0;
-        client_database=sqlite3.connect('client_data.db');
-        c=client_database.cursor();
-        c.execute('''SELECT name FROM customers''');
-        namevar=c.fetchall();
-        for row in namevar:
-            namearray.append(row[0]);
-            length=len(namearray);
-        while(i<length):
-            c.execute('''SELECT product FROM ''' + namearray[i] +''' ''');
-            prodvar=c.fetchone();
-            for row in prodvar:
-                if row==searchproduct:
-                    print(namearray[i]); c.execute('''SELECT product, quantity FROM ''' + namearray[i] + ''' ''');
-                    quantvar=c.fetchone();
-                    for row in quantvar:
-                        print(row);
-                    i=i+1;
-                else: i=i+1;
+        print("\nPRODUCT SEARCH:", searchproduct)
+        sales_db=sqlite3.connect('sales_data.db');
+        c=sales_db.cursor();
+        c.execute('''SELECT num, date, product, quantity FROM sales WHERE product=(?)''', [searchproduct]);
+        found_prod=c.fetchall();
+        for row in found_prod:
+            print(row);
+    
 
-        
+#deletes the client information that matches the inputted name (delete_name) from client database
+#information in sales database with matching name will not be deleted
     def delete_client(delete_name):
         client_database=sqlite3.connect('client_data.db');
         c=client_database.cursor();
-        answer=input("ARE YOU SURE YOU WANT TO DELETE CLIENT: " + delete_name + "?\n");
-        if(answer == "yes"):
-            c.execute('''DELETE FROM customers WHERE name=(?) ''', [delete_name]);
-            print("DELETED: ", delete_name, "FROM DATABASE");
-            client_database.commit();
-            client_database.close();
-        else: print("DELETE CANCELLED");
+        c.execute('''DELETE FROM customers WHERE name=(?) ''', [delete_name]);
+        print("\nDELETED: ", delete_name); print("FROM DATABASE\n");
+        client_database.commit();
+        client_database.close();
 
-
-    def delete_product(title, delete_prod):
-        client_database=sqlite3.connect('client_data.db');
-        c=client_database.cursor();
-        answer=input("ARE YOU SURE YOU WANT TO DELETE PRODUCT: " +delete_prod + "?\n");
-        if(answer == "yes"):
-            c.execute('''DELETE FROM ''' + title +''' WHERE product=(?) ''', [delete_prod]);
-            print("PRODUCT:", delete_prod, "DELETED FROM RECORD");
-            client_database.commit();
-            client_database.close();
-        else: print("DELETE CANCELLED");
 
 
