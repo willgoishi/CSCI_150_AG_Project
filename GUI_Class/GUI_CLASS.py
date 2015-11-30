@@ -14,7 +14,7 @@ import sqlite3        #database library
 from ExpenseClassGUI import runExpeneseClass   #imports runExpeneseClass from ExpenseClassGUI
 #from income import income                     #imports income class
 #from incomeDB import incomeDB                 #imports income database class
-#from records import records                   #imports python file with records class
+from records import records                   #imports python file with records class
 
 class HomeScreen(Frame):   #gui application that builds the agriculture graphical interface
     #This is the constructor for the HomeScreen class
@@ -44,7 +44,7 @@ class HomeScreen(Frame):   #gui application that builds the agriculture graphica
         Clients_button = Button(self, text = "Clients", command = clients)                     #Clients button created
         Clients_button.place(x = 20, y = 240);
 
-        Records_button = Button(self, text = "Records", command = records)                     #Records button created
+        Records_button = Button(self, text = "Records", command = self.sequence(run_records_gui_class(root)))                     #Records button created
         Records_button.place(x = 20, y = 310);
 
         application_menu = Menu(self.main);                                    #application_menu of the main window
@@ -111,108 +111,169 @@ class clients(Frame):                                             #<clients> cla
 
         #
 
-class records(Frame):                                             #<records> class created for <records> page when <records> button is pressed at the main menu
-    def __init__(self,master = None):
-        Frame.__init__(self, master)
-        self.master.title("Clients")
+def run_records_gui_class(root):  #function that will move towards class records_gui_class
+    records_gui_class(root);
+    
+Records = records(); # places value of records class file into Records
+class records_gui_class(Frame):                                              #<records> class created for <records> page when <records> button is pressed at the main menu
+    
+    Records = records();
+    
+    def __init__(self, master = None):
+        Frame.__init__(self, master);
+        self.master.title("Records");
+        self.menu();
+        
+    def sequence(self, funct):
+        for child in root.winfo_children():     #This is the loop that will go through the Frames widgets and delete the children
+            child.destroy()
+        return funct();
+    
+    def menu(self, master = None): #main menu for the buttons related to each of the different categories: sales, employees, payroll
+        self.master.title("Records Menu");
+        employees = Button(master, text = "Employees", command = lambda: self.sequence(self.add_employee))
+        employees.place(x = 250, y = 50);
 
-        #Button that will, when called create a database for employees by calling it from the records class
-        new_storage_employees = Button(self, text = "New: Employee List", command = records.create_database_employees)
+        sales = Button(master, text = "Sales Records", command = lambda: self.sequence(self.add_sale))
+        sales.place(x = 250, y = 100);
+        
+        yearly_earnings = Button(master, text = "Comparing Yearly Earningss", command = lambda: self.sequence(self.sales_comparison))
+        yearly_earnings.place(x = 250, y = 150);
+        
+        payroll = Button(master, text = "Payroll Records")
+        payroll.place(x = 250, y = 200);
+
+    def employee_records_database(self):                 #function to call from records class function that creates an employees records database
+        Records.create_database_employees();
+        print("Employees Records Database Created");
+        
+    def destroy_employee_database(self):                 #function call to record's method that deletes employee database
+        Records.delete_database('employees')
+        print("Database Destroyed-");
+        
+    def add_employee2(none, idnm, n, pn, jt, e, ye):     #function to call from records class function to add an employee to records
+        print("Employee Being Stored...")
+        Records.store_employee(idnm, n, pn, jt, e, ye);
+        print("Empoyee:", n, "Added");
+        
+    def add_employee(self, master = None):#Add employee function creates a new frame for all widgets dealing with adding employees etc.
+     #Button that will, when called create a database for employees by calling it from the records class
+        Frame.__init__(self, master);
+        self.master.title("Employees");
+        
+        new_storage_employees = Button(master, text = "New: Employee Record Database", command = lambda: self.employee_records_database())
         new_storage_employees.place(x = 150, y = 20);#placement of the button on the page
 
-        new_storage_employees = Button(self, text = "New: Sales List")
-        new_storage_employees.place(x = 150, y = 50);
-
-        add_employee = Button(self, text = "Add Employee")
-        add_employee.place(x = 50, y = 80);
-
         #Entries for the add_employee button
-        label1 = Label(self, text = "Id:");
+        label1 = Label(master, text = "Id:");
         label1.place(x = 50, y = 110);
-        e1 = Entry(self)
+        e1 = Entry(master)
         e1.place(x = 100, y = 110);
 
-        label2 = Label(self, text = "Name:")
-        label2.place(x = 50, y = 140);
-        e2 = Entry(self)
+        label2 = Label(master, text = "Name:")
+        label2.place(x = 50, y = 140); 
+        e2 = Entry(master)
         e2.place(x = 100, y = 140);
 
-        label3 = Label(self, text = "Phone#:")
+        label3 = Label(master, text = "Phone#:")
         label3.place(x = 50, y = 170)
-        e3 = Entry(self)
+        e3 = Entry(master)
         e3.place(x = 100, y = 170);
 
-        label4 = Label(self, text = "Job:")
+        label4 = Label(master, text = "Job:")
         label4.place(x = 50, y = 200)
-        e4 = Entry(self)
+        e4 = Entry(master)
         e4.place(x = 100, y = 200);
 
-        label5 = Label(self, text = "Email:")
+        label5 = Label(master, text = "Email:")
         label5.place(x = 50, y = 230)
-        e5 = Entry(self)
+        e5 = Entry(master)
         e5.place(x = 100, y = 230);
 
-        label6 = Label(self, text = "YearE:")
+        label6 = Label(master, text = "YearE:")
         label6.place(x = 50, y = 270)
-        e6 = Entry(self)
+        e6 = Entry(master)
         e6.place(x = 100, y = 270);
+        #add employee button
+        add_employee = Button(master, text = "Add Employee", command = lambda: self.add_employee2((e1.get()),(e2.get()),(e3.get()),(e4.get()),(e5.get()),(e6.get())));
+        add_employee.place(x = 50, y = 80);
+        #print and view all the employees in the database
+        print_employee_added = Button(master, text = "Employee Added")
+        print_employee_added.place(x = 400, y = 200);
+        print_employee_added.config(command = lambda: self.Records.view_records_employees());
+        #Button for deleting the database
+        delete_storage_employees = Button(master, text = "Delete: Employee List", command = lambda: self.destroy_employee_database())
+        delete_storage_employees.place(x = 400, y = 300);
+        #back button to return to menu
+        back_button = Button(master, text = "Back", command = lambda: self.sequence(self.__init__))
+        back_button.place(x = 500 , y = 500 );
+        
         #
+    def create_sales_storage(self):
+        Records.create_database_sales();
+        print("Database for Sales Created");
 
-        #Add_sale button that will take in the desired information and store that information into the sales database
-        add_sale = Button(self, text = "Add Sale")
-        add_sale.place(x = 50, y = 400);
-        #Entries for the add_sales button
-        label7 = Label(self, text = "Id:");
-        label7.place(x = 50, y = 430);
-        e7 = Entry(self)
-        e7.place(x = 120, y = 430);
+    def destroy_sales_storage(self):
+        Records.delete_database('sales');
+        print("Database Destroyed");
+        
+    def store_asale(none, sn, st, q, p, tc, y):
+        print("storing sale...")
+        Records.store_sale(sn, st, q, p, tc, y);
+        print("Sale Stored")
+        
+    def add_sale(self,master = None):#add sale function that represents a frame with all functionalities related to adding sales
+        Frame.__init__(self, master);
+        self.master.title("Sales Information");
+        
+        new_storage_sales = Button(master, text = "New: Sales List", command = lambda: self.create_sales_storage());
+        new_storage_sales.place(x = 150, y = 50);
+        #delete sales database button
+        delete_sales_database = Button(master, text = "Delete Sales Database", command = lambda: self.destroy_sales_storage());
+        delete_sales_database.place(x = 250, y = 50);
+        
+        #Labels and Entries for the add_sales button   ## each label/entry represents one data value that enters into the add sale function
+        label7 = Label(master, text = "Id:");
+        label7.place(x = 50, y = 230);
+        e7 = Entry(master)
+        e7.place(x = 120, y = 230);
 
-        label8 = Label(self, text = "Type:")
-        label8.place(x = 50, y = 460);
-        e8 = Entry(self)
-        e8.place(x = 120, y = 460);
+        label8 = Label(master, text = "Type:")
+        label8.place(x = 50, y = 260);
+        e8 = Entry(master)
+        e8.place(x = 120, y = 260);
 
-        label9 = Label(self, text = "Quantity:")
-        label9.place(x = 50, y = 490)
-        e9 = Entry(self)
-        e9.place(x = 120, y = 490);
+        label9 = Label(master, text = "Quantity:")
+        label9.place(x = 50, y = 290)
+        e9 = Entry(master)
+        e9.place(x = 120, y = 290);
 
-        label10 = Label(self, text = "Job:")
-        label10.place(x = 50, y = 520)
-        e10 = Entry(self)
-        e10.place(x = 120, y = 520);
+        label10 = Label(master, text = "Price_Per: $")
+        label10.place(x = 50, y = 320)
+        e10 = Entry(master)
+        e10.place(x = 120, y = 320);
 
-        label11 = Label(self, text = "Price_Per: $")
-        label11.place(x = 50, y = 550)
-        e11 = Entry(self)
-        e11.place(x = 120, y = 550);
+        label11 = Label(master, text = "Cost: $")
+        label11.place(x = 50, y = 350)
+        e11 = Entry(master)
+        e11.place(x = 120, y = 350);
 
-        label12 = Label(self, text = "Cost: $")
-        label12.place(x = 50, y = 580)
-        e12 = Entry(self)
-        e12.place(x = 120, y = 580);
+        label12 = Label(master, text = "Year:")
+        label12.place(x = 50, y = 380)
+        e12 = Entry(master)
+        e12.place(x = 120, y = 380);
+        
+        ##Add_sale button that will take in the desired information and store that information into the sales database
+        add_sale = Button(master, text = "Add Sale", command = lambda: self.store_asale((e7.get()),(e8.get()),(e9.get()),(e10.get()),(e11.get()),(e12.get())));
+        add_sale.place(x = 50, y = 150);
 
-        label13 = Label(self, text = "Year:")
-        label13.place(x = 50, y = 610)
-        e13 = Entry(self)
-        e13.place(x = 120, y = 610);
-        #
-        delete_storage_employees = Button(self, text = "Delete: Employee List")#, command = records.delete_database('employees'))
-        delete_storage_employees.place(x = 700, y = 150);
+        view_sales_button = Button(master, text = "View Sales", command = lambda: Records.view_sales_records())
+        view_sales_button.place(x = 300, y = 280)
 
-        delete_storage_sales = Button(self, text = "Delete: Sales List")#, command = records.delete_database('sales'))
-        delete_storage_sales.place(x = 700, y = 180);
-
-        view_employees_button = Button(self, text = "View Employees", command = records.view_records_employees)
-        view_employees_button.place(x = 700, y = 250);
-
-        view_sales_button = Button(self, text = "View Sales", command = records.view_sales_records)
-        view_sales_button.place(x = 700, y = 280)
-
-        compare_sales = Button(self, text = "Compare Years and Income", command = records.compare_sales_records)
-        compare_sales.place(x = 700, y = 350);
+        back_button = Button(master, text = "Back", command = lambda: self.sequence(self.__init__))
+        back_button.place(x = 500 , y = 500 );
 
 root = Tk()
-root.geometry("400x400")
+root.geometry("1000x1000")
 HomeScreenApp = HomeScreen(root)
 HomeScreenApp.mainloop()
