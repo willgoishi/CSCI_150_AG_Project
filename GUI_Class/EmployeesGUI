@@ -62,3 +62,8 @@ class Employees(Frame):
         for child in self.winfo_children():
             child.destroy()
         funct()
+
+root = Tk()
+root.geometry("400x400")
+employees = Employees(root)
+employees.mainloop()
