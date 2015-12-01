@@ -140,7 +140,7 @@ class records_gui_class(Frame):                                              #<r
         yearly_earnings = Button(master, text = "Comparing Yearly Earningss", command = lambda: self.sequence(self.sales_comparison))
         yearly_earnings.place(x = 250, y = 150);
         
-        payroll = Button(master, text = "Payroll Records")
+        payroll = Button(master, text = "Payroll Records", command = lambda: self.sequence(self.payroll_page))
         payroll.place(x = 250, y = 200);
 
     def employee_records_database(self):                 #function to call from records class function that creates an employees records database
@@ -272,6 +272,30 @@ class records_gui_class(Frame):                                              #<r
 
         back_button = Button(master, text = "Back", command = lambda: self.sequence(self.__init__))
         back_button.place(x = 500 , y = 500 );
+         
+    def sales_comparison(self, master = None):#page to deal with the functionality of sorting and printing values of sales for each year for comparison
+        Frame.__init__(self, master);
+        self.master.title("Sales Comparison");
+        tablenames = [];
+        
+        database = sqlite3.connect('records_information_sales.db');#Connects to database
+        
+        database2 = database.cursor();
+        table = database2.execute('''SELECT name FROM sqlite_master WHERE type='table' ''');#moves through database schema and searches through table names
+        
+        for t in table:                #transverses through table from the database
+            tablenames.append(t[0]);   #appends information into the tablenames array
+
+        if 'sale' in tablenames: #checks if the database is available or not : by fetching table name and checking if name is in list
+            compare_sales = Button(master, text = "Compare Years and Income", command = lambda: Records.compare_sales_records());  #if available commit function 
+            compare_sales.place(x = 300, y = 350);
+        else:
+            messagebox.showinfo("ERROR", "Error Database Not Available")
+        #Back button to menu of records page
+        back_button = Button(master, text = "Back", command = lambda: self.sequence(self.__init__))
+        back_button.place(x = 500 , y = 500 );
+        
+        database2.close(); # closes database
 
 root = Tk()
 root.geometry("1000x1000")
