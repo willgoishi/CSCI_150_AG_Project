@@ -5,7 +5,7 @@ import sqlite3
 from income import income                     
 from incomeDB import incomeDB                 
 
-def runIncomeClass(root)
+def runIncomeClass(root):
     IncomeGUI(root)
 
 class IncomeGUI(Frame):   
@@ -58,7 +58,7 @@ class IncomeGUI(Frame):
             self.createIncome))
         backButton.pack()
 
-    def saveDetails(self, namein, amountin, pricein)
+    def saveDetails(self, namein, amountin, pricein):
         item = namein.get()
         amount = amountin.get()
         price = pricein.get()
