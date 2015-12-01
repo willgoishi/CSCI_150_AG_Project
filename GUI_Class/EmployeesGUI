@@ -1,0 +1,64 @@
+from tkinter import *
+import sqlite3
+from EmployeeDB import EmployeesDatabase
+from EmployeeClass import Employees
+
+
+def runEmployeeClass(root):
+    Employees(root)
+
+
+class Employees(Frame):
+    employeesDB = EmployeesDatabase()
+
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
+        self.pack()
+        self.createButtons()
+        self.master.title("Employees")
+
+    # Creates the buttons for the first window
+    def createButtons(self):
+        addEmployee = Button(self, text="Add Employee") # Add Employee Button, Incomplete
+        addEmployee.pack(fill=X, padx=10, pady=20)
+
+        currentEmployeesButton = Button(self, text="View Current Employees")  # Button to view current Employees, Inc
+        currentEmployeesButton.pack(fill=X, padx=10, pady=20)
+
+        backButton = Button(self, text="Back")  # This button will take the user back to the last window, Incomplete
+        backButton.pack(fill=X, padx=10, pady=20)
+
+    # Creates the addEmployee Button and Entries when you select addEmployee
+    def addEmployee(self):
+        self.master.title("Add new Employee")  # Title Change to Add New Employee
+        employeeName = Label(self, text="Name of Employee: ") # Label for the Name of Employee entry
+        employeeName.pack()
+        self.employeeName = Entry(self, bd=5)  # Where the user will input employee name
+        self.employeeName.pack()
+        employeeNumber = Label(self, text="Phone Number of Employee: ")
+        employeeNumber.pack()
+        self.employeeNumber = Entry(self, bd=5)
+        self.employeeNumber.pack()
+        employeeEmail = Label(self, text="Email of Employee: ") # Label for the Email Entry
+        employeeEmail.pack()
+        self.employeeEmail = Entry(self, bd=5)
+        self.employeeEmail.pack()
+        employeePosition = Label(self, text="Position of Employee: ") # Label for the Position Entry
+        employeePosition.pack()
+        self.employeePosition = Entry(self, bd=5)
+        self.employeePosition.pack()
+        employeeSalary = Label(self, text="Salary of Emploee: ") # Label for the Salary Entry
+        employeeSalary.pack()
+        self.employeeSalary = Entry(self, bd=5)
+        self.employeeSalary.pack()
+        # Back button
+        backButton = Button(self, text="Back", command=lambda: self.sequence(self.createButtons))
+        backButton.pack()
+        # Save button
+        saveButton = Button(self, text="Save Employee") # This button will save the Employee Info, Incomplete
+        saveButton.pack()
+        
+        def sequence(self, funct):
+        for child in self.winfo_children():
+            child.destroy()
+        funct()
