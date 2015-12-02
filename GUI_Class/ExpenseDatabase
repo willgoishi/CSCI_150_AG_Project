@@ -1,0 +1,152 @@
+import sqlite3  #imports sqlite3
+
+def getDatabaseConnection():    #defines a function that will allow the program to connect to the database
+    return sqlite3.connect('Inventory.db')  #the database is called Inventory.db
+
+class InventoryDatabase():
+    InventoryDB = getDatabaseConnection()
+    database = InventoryDB.cursor()
+
+    #Function that creates the databases that will be used
+    def createTable(self):
+
+        def createGeneralTreeTable(self):
+            self.database.execute('''CREATE TABLE GeneralTreeInventory
+                        (Name TEXT, TotalQuantity INTEGER)''')
+
+        def createDetailedTreeTable(self):
+            self.database.execute('''CREATE TABLE DetailedTreeInventory
+                        (Name TEXT, PurchaseDate TEXT, DateUsed TEXT, Quantity INTEGER, Price INTEGER, Description TEXT)''')
+
+        def createGeneralAnimalTable(self):
+            self.database.execute('''CREATE TABLE GeneralAnimalInventory
+                        (Name TEXT, TotalQuantity INTEGER)''')
+
+        def createDetailedAnimalTable(self):
+            self.database.execute('''CREATE TABLE DetailedAnimalInventory
+                        (Name TEXT, PurchaseDate TEXT, DateUsed Text, Quantity INTEGER, Price INTEGER, Description TEXT)''')
+
+        def createGeneralMachineTable(self):
+            self.database.execute('''CREATE TABLE GeneralMachineInventory
+                        (Name TEXT, TotalQuantity INTEGER)''')
+
+        def createDetailedMachineTable(self):
+            self.database.execute('''CREATE TABLE DetailedMachineInventory
+                        (Name TEXT, PurchaseDate TEXT, DateUsed TEXT, Quantity INTEGER, Price INTEGER, Description TEXT)''')
+
+        #These three functions call on the above functions and generate the database
+        createGeneralTreeTable(self)
+        createDetailedTreeTable(self)
+        createGeneralAnimalTable(self)
+        createDetailedAnimalTable(self)
+        createGeneralMachineTable(self)
+        createDetailedMachineTable(self)
+
+        self.InventoryDB.commit()
+        self.InventoryDB.close()
+
+    #Function that will read the inventory stored in the databases
+    def getOverviewInventory(self, type):
+        self.InventoryDB = getDatabaseConnection()
+        self.database = self.InventoryDB.cursor()
+
+        if type.lower() == "tree":
+            database = "GeneralTreeInventory"
+
+        elif type.lower() == "animal":
+            database = "GeneralAnimalInventory"
+
+        elif type.lower() == "machine":
+            database = "GeneralMachineInventory"
+
+        return self.database.execute("SELECT * FROM %s ORDER BY Name" % database)
+
+    def getDetailedInventory(self, type, name):
+        self.InventoryDB = getDatabaseConnection()
+        self.database = self.InventoryDB.cursor()
+
+        if type.lower() == "tree":
+            return self.database.execute("SELECT * FROM DetailedTreeInventory WHERE Name = '%s'" % name)
+
+        elif type.lower() == "animal":
+            return self.database.execute("SELECT * FROM DetailedAnimalInventory WHERE Name = '%s'" % name)
+
+        elif type.lower() == "machine":
+            return self.database.execute("SELECT * FROM DetailedMachineInventory WHERE Name = '%s'" % name)
+
+    #Function that will insert the inventory stored in the databases
+    def insertInvetory(self, item):
+        self.InventoryDB = getDatabaseConnection()
+        self.database = self.InventoryDB.cursor()
+
+        if item.itemType.lower() == "tree":
+            self.database.execute('''
+                INSERT INTO DetailedTreeInventory (Name, PurchaseDate, DateUsed, Quantity, Price) VALUES (?, ?, ?, ?, ?)''',
+                                  (item.name.capitalize(), item.purchaseDate, item.firstUse, item.quantity, item.price, ))
+
+            # This is ran update the general table if the item already exist
+            for row in self.database.execute('select * FROM GeneralTreeInventory ORDER BY Name'):
+                if row[0].lower() == item.name.lower():
+                    totalQuantity = row[1]
+                    return self.updateGeneralInventory(item, totalQuantity)
+
+            # If the item does not exits in the general table, the entry is created
+            self.database.execute('''
+                INSERT INTO GeneralTreeInventory (Name, TotalQuantity) VALUES (?, ?)''',
+                                  (item.name.capitalize(), item.quantity))
+
+            self.InventoryDB.commit()
+            self.InventoryDB.close()
+
+        elif item.itemType.lower() == "animal":
+            self.database.execute('''
+                INSERT INTO DetailedAnimalInventory (Name, PurchaseDate, Quantity, Price) VALUES (?, ?, ?, ?)''',
+                                  (item.name.capitalize(), item.purchaseDate, item.quantity, item.price))
+
+            # This is ran update the general table if the item already exist
+            for row in self.database.execute('SELECT * FROM GeneralAnimalInventory ORDER BY Name'):
+                if row[0].lower() == item.name.lower():
+                    totalQuantity = row[1]
+                    return self.updateGeneralInventory(item, totalQuantity)
+
+            # If the item does not exits in the general table, the entry is created
+            self.database.execute('''
+                INSERT INTO GeneralAnimalInventory (Name, TotalQuantity) VALUES (?, ?)''',
+                                  (item.name.capitalize(), item.quantity))
+            self.InventoryDB.commit()
+            self.InventoryDB.close()
+
+        elif item.itemType.lower() == "machine":
+            self.database.execute('''
+                INSERT INTO DetailedMachineInventory (Name, PurchaseDate, Quantity, Price) VALUES (?, ?, ?, ?)''',
+                                  (item.name.capitalize(), item.purchaseDate, item.quantity, item.price))
+
+            # This is ran update the general table if the item already exist
+            for row in self.database.execute('SELECT * FROM GeneralMachineInventory ORDER BY Name'):
+                if row[0].lower() == item.name.lower():
+                    totalQuantity = row[1]
+                    return self.updateGeneralInventory(item, totalQuantity)
+
+            # If the item does not exits in the general table, the entry is created
+            self.database.execute('''
+                INSERT INTO GeneralMachineInventory (Name, TotalQuantity) VALUES (?, ?)''',
+                                  (item.name.capitalize(), item.quantity))
+            self.InventoryDB.commit()
+            self.InventoryDB.close()
+
+    def updateGeneralInventory(self, item, totalQuantity):
+        quantity = int(item.quantity)
+        totalQuantity = totalQuantity + quantity
+
+        if item.itemType.lower() == "tree":
+            self.database.execute("UPDATE GeneralTreeInventory SET TotalQuantity = ?  WHERE Name = ?", (totalQuantity, item.name.capitalize() ))
+
+        elif item.itemType.lower() == "animal":
+            self.database.execute("UPDATE GeneralAnimalInventory SET TotalQuantity = ?  WHERE Name = ?", (totalQuantity, item.name.capitalize() ))
+
+        elif item.itemType.lower() == "machine":
+            self.database.execute("UPDATE GeneralMachineInventory SET TotalQuantity = ?  WHERE Name = ?", (totalQuantity, item.name.capitalize() ))
+
+        self.InventoryDB.commit()
+        self.InventoryDB.close()
+
