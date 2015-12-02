@@ -11,10 +11,15 @@ import sqlite3        #database library
 #from EmployeeClass import Employees           #imports employee class
 #from EmployeeDB import EmployeesDatabase      #imports employee database class
 #from Database import InventoryDatabase        #imports database for expense
-from ExpenseClassGUI import runExpeneseClass   #imports runExpeneseClass from ExpenseClassGUI
 #from income import income                     #imports income class
 #from incomeDB import incomeDB                 #imports income database class
 from records import records                   #imports python file with records class
+
+#imports for Expenses
+from ExpenseDatabase import * #InventoryDatabase  # Import InventoryDatabase class from Database.py
+from ExpenseClass import Inventory  # Import Inventory class from ExpenseClass.py
+from tkinter.ttk import Treeview
+import calendar
 
 class HomeScreen(Frame):   #gui application that builds the agriculture graphical interface
     #This is the constructor for the HomeScreen class
@@ -65,7 +70,10 @@ class HomeScreen(Frame):   #gui application that builds the agriculture graphica
             child.destroy()
         return funct()
 
-
+def returnHome():       #Created in order to return to the homescreen from any menu
+    for child in root.winfo_children():     #This is the loop that will go through the Frames widgets and delete the children
+            child.destroy()
+    HomeScreen(root)    #This will run the HomeScreen class
 
 class employee(Frame):                                            #<employee> class created for <employee> page when <employee> button is pressed at the main menu
     def __init__ (self,master = None):
@@ -78,16 +86,483 @@ class employee(Frame):                                            #<employee> cl
 
         #
 
-class expenses(Frame):                                            #<expenses> class created for <expenses> page when <expenses> button is pressed at the main menu
-    def __init__(self,master = None):
-        Frame.__init__(self, master)
-        #Enter function to be called here
+class Expenses(Frame):
+
+    # Creates the first option menus in the expense window
+    def createOptionButtons(self):
         self.master.title("Expenses")
 
-        #insert code here to create buttons, entries and any feature towards specified page
+        # Creates the add item to inventory button
+        addItem = Button(root, text="Add item to inventory", command=lambda: self.sequence(self.addItem))#addItem(master)))  # This button will send to the user to the add item page
+        addItem.place(x = 130, y = 100)
+
+        # Creates the view items in inventory button
+        inventoryButton = Button(root, text="View items in inventory", command=lambda: self.sequence(self.viewInveroty))  # This button will send the user to the view inventory page
+        inventoryButton.place(x = 130, y = 150)
+
+        # Create the total cost button
+        totalCost = Button(root, text="Total Cost", command=lambda: self.sequence(self.viewTotalCost))
+        totalCost.place(x = 130, y = 200)
+
+        # Creates the back button
+        backButton = Button(root, text="Back", command=returnHome)  # This button will return the user to the main page. Still working on it.
+        backButton.place(x = 50, y = 350)
+
+    # Creates the add item to inventory button and entries
+    def addItem(self):
+        self.master.title("Add new item")  # Changes the title of the page to Add New Item
+
+        # Creates a label called nameOfItems and an entry called itemName
+        nameOfItem = Label(root, text="Item Name: ")
+        nameOfItem.place(x = 110, y = 100)
+        self.itemName = Entry(root)       # This will allow the user to enter the name of the item that they will be adding
+        self.itemName.place(x = 190, y = 100)
+
+        # Creates the label called itemTypeLabel and a drop down menu called itemTypeChoice
+        itemTypeLabel = Label(root, text = "Item's type: ")
+        itemTypeLabel.place(x = 110, y = 160)
+        self.itemTypeChoice = StringVar(root)       # This makes itemTypeChoice a permanent String
+        self.itemTypeChoice.set("Tree")             # Tree is set to the default string of itemTypeChoice
+        typeChoices = OptionMenu(root, self.itemTypeChoice, "Tree", "Animal", "Machine")    # Drop down menu is created and options Tree, Animal, and Machine are added to the menu
+        typeChoices.place(x = 190, y = 160)
 
 
-        #
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.createOptionButtons))
+        backButton.place(x = 50, y = 350)
+        # Next button
+        nextButton = Button(root, text = "Next", command=self.saveNameAndType) #This button will send the user to the add inventory page
+        nextButton.place(x = 350, y = 350)
+
+    # Function that creates a new item object and assigns it a name and the type
+    def saveNameAndType(self):
+        name = self.itemName.get()
+        self.item = Inventory(name)
+        itemType = self.itemTypeChoice.get()
+        self.item.itemType = itemType
+        self.sequence(self.addToInventory)
+
+    # Creates the add to inventory options
+    def addToInventory(self):
+        self.master.title("Add %s to %s inventory" % (self.item.name, self.item.itemType))
+
+        # This assigns the variables month, day, and year to be value holder for integer values
+        # They are also set to be values of the class expenses (by using self) so that they can
+        # be used in the function updateDay and SaveDate
+        self.month = IntVar(self)
+        self.day = IntVar(self)
+        self.year = IntVar(self)
+
+        # This trace function is used to keep track of when the selected months and years change. This is
+        # done to adjust the days of the month according to the month or the year
+        self.month.trace('w', self.updateDay)
+        self.year.trace('w', self.updateDay)
+
+        numMonths = self.nums(1, 12)  # Runs the nums function that creates a list from 1 to 12
+        numYears = self.nums(2015, 2030)  # Runs the nums function that creates a list from 2015 to 2030
+
+        # This creates the drop down menu and assigns the options is the menu. The day menu is left empty and
+        # is assigned in the updateDay function
+        self.optionmenu_month = OptionMenu(root, self.month, *numMonths)
+        self.optionmenu_day = OptionMenu(root, self.day, '')
+        self.optionmenu_year = OptionMenu(root, self.year, *numYears)
+
+        # Sets the default value of the month and year options to 1 and 2015 respectively
+        self.month.set(numMonths[0])
+        self.year.set(numYears[0])
+
+        self.optionmenu_month.place(x = 100, y = 120)
+        self.optionmenu_day.place(x = 150, y = 120)
+        self.optionmenu_year.place(x = 200, y = 120)
+
+
+        datePurchased = Label(root, text = "Date Purchased")
+        datePurchased.place(x = 150, y = 95)
+
+        quantityPurchasedLabel = Label(root, text="Amount purchased:")
+        quantityPurchasedLabel.place(x = 50, y = 180)
+        self.quantityPurchasedEntry = Entry(root, bd=5) # Creates input box for user to insert the amount of items purchased
+        self.quantityPurchasedEntry.place(x = 180, y = 180)
+
+        pricePaidLabe = Label(root, text="Price paid for all: ")
+        pricePaidLabe.place(x = 50, y = 210)
+        self.pricePaidEntry = Entry(root, bd=5) # Creates input box for user to insert the price paid for the item
+        self.pricePaidEntry.place(x = 180, y = 210)
+
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.addItem))
+        backButton.place(x = 50, y = 350)
+
+        nextButton = Button(root, text = "Next", command=self.saveQuanAndPrice)
+        nextButton.place(x = 350, y = 350)
+
+    # This function will update the days of the month according to the selected month and year
+    def updateDay(self, *args):
+        # The .get() will obtain the selected month and year values from the drop down menu above
+        month = self.month.get()
+        year = self.year.get()
+
+        # Creates a loop which chooses the last day of the month according to the month or the year
+        if month == 1 or month  == 3 or month  == 5 or month  == 7 or month  == 8 or month  == 10 or month  == 12:
+            lastDay = 31
+        elif month  == 4 or month  == 6 or month  == 9 or month  == 11:
+            lastDay = 30
+        # This elif loop uses the leap year formula at account for leap years
+        elif month  == 2:
+            if (year % 4) == 0:
+                if (year % 100) == 0:
+                    if (year % 400) == 0:
+                        lastDay = 29
+                    else:
+                        lastDay = 28
+                else:
+                    lastDay = 29
+            else:
+                lastDay = 28
+
+        numDays = self.nums(1,lastDay)
+
+        # Assigns menu to the day drop down menu and deletes all of the options in the menu
+        menu = self.optionmenu_day['menu']
+        menu.delete(0, 'end')
+
+        # Loop for generating the new day menu
+        for day in numDays:
+            menu.add_command(label=day, command=lambda d = day: self.day.set(d))
+        self.day.set(1)
+
+    # Function that creates the range of numbers for the drop down menu
+    def nums(self, numStart, numEnd):
+        num = range(numStart, numEnd + 1)
+        return num
+
+    # Function that assigns the price and quantity to an item
+    def saveQuanAndPrice(self):
+        self.item.price = self.pricePaidEntry.get()
+        self.item.quantity = self.quantityPurchasedEntry.get()
+        self.saveDate()
+        self.sequence(self.confirmation)
+
+    # Function that assigns the purchase date to an item
+    def saveDate(self):
+        self.item.purchaseMonth = self.month.get()
+        self.item.purchaseDay = self.day.get()
+        self.item.purchaseYear = self.year.get()
+        self.item.purchaseDate = ("%s/%s/%s" % (self.item.purchaseMonth, self.item.purchaseDay, self.item.purchaseYear))
+
+    # Function that displays the user inputted information
+    def confirmation(self):
+        self.master.title("Confirm %s information" % self.item.name)
+        name = Label(root, text="Name of item: ")
+        name.place(x = 100, y = 50)
+        itemName = Label(root, text=self.item.name)
+        itemName.place(x = 100, y = 65)
+
+        type = Label(root, text="%s type: " % self.item.name)
+        type.place(x = 100, y = 90)
+        itemType = Label(root, text=self.item.itemType)
+        itemType.place(x = 100, y = 105)
+
+        quantity = Label(root, text="How many %s were bought?" % self.item.name)
+        quantity.place(x = 100, y = 130)
+        itemQuantity = Label(root, text=self.item.quantity)
+        itemQuantity.place(x = 100, y = 145)
+
+        price = Label(root, text="How much did the %s %s cost?" % (self.item.quantity, self.item.name))
+        price.place(x = 100, y = 170)
+        itemPrice = Label(root, text=self.item.price)
+        itemPrice.place(x = 100, y = 185)
+
+        date = Label(root, text="When were %s bought?" % self.item.name)
+        date.place(x = 100, y = 210)
+        itemDate = Label(root, text=self.item.purchaseDate)
+        itemDate.place(x = 100, y = 225)
+
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.addToInventory))
+        backButton.place(x = 50, y = 350)
+
+        startOverButton = Button(root, text = "Start Over", command=lambda: self.sequence(self.createOptionButtons))
+        startOverButton.place(x = 200, y = 350)
+
+        confirmButton = Button(root, text = "Confirm", command=lambda: self.sequence(self.addToDatabase))
+        confirmButton.place(x = 320, y = 350)
+
+    # Adds the item to the database
+    def addToDatabase(self):
+        self.inventoryDB.insertInvetory(self.item)
+        return self.successful()
+
+    # Displays a success message when the item is added
+    def successful(self):
+        self.master.title("%s was added successfully!" % self.item.name)
+
+        succMessage = Message(root, text = "%s was successfully added to the %s list!" % (self.item.name, self.item.itemType))
+        succMessage.place(x = 150, y = 150)
+
+        startOverButton = Button(root, text = "Start Over", command=lambda: self.sequence(self.createOptionButtons))#self.saveNameAndType(itemName)))#(self.saveNameAndType(itemName)))  # (itemName)))# lambda: self.sequence(self.test))  #This button will send the user to the add inventory page
+        startOverButton.place(x = 150, y = 350)
+
+    # Used to view the inventory
+    def viewInveroty(self):
+        # Creates the label called chooseTypeLabel and a drop down menu called chooseItemType
+        chooseTypeLabel = Label(root, text = "Item's type: ")
+        chooseTypeLabel.place(x = 110, y = 160)
+        self.chooseItemType = StringVar(root)       # The drop down menu is created and assigned to chooseItemType
+        self.chooseItemType.set("Tree")             # Tree is set to the default option in the drop down menu
+        typeChoices = OptionMenu(root, self.chooseItemType, "Tree", "Animal", "Machine", "All")    # Options Tree, Animal, Machine, and ALL are added to the drop down menu
+        typeChoices.place(x = 190, y = 160)
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.createOptionButtons))  # This button will return the user to the expenses option page
+        backButton.place(x = 50, y = 350)
+
+        nextButton = Button(root, text = "Next", command=lambda: self.sequence(self.displayGeneralInventory))#self.saveNameAndType(itemName)))#(self.saveNameAndType(itemName)))  # (itemName)))# lambda: self.sequence(self.test))  #This button will send the user to the add inventory page
+        nextButton.place(x = 350, y = 350)
+
+    # Used to create the inventory table
+    def displayGeneralInventory(self):
+        # This creates a table using the function Treeview
+        self.tree = Treeview(height="20", columns=("Name", "Current Quantity"))
+        self.tree.pack()
+        self.tree.heading('#1', text = "Name", anchor = CENTER)
+        self.tree.heading('#2', text = "Current Quantity", anchor = CENTER)
+        self.tree.column('#1', minwidth=0, width = 100)
+        self.tree.column('#2', minwidth=0, width = 100)
+        self.tree.column('#0', minwidth=0, width = 0)
+
+        itemType = self.chooseItemType.get()
+
+        if(itemType == "All"):
+            self.obtainData("Tree")
+            self.obtainData("Animal")
+            self.obtainData("Machine")
+
+        else:
+            self.obtainData(itemType)
+
+    # Adds database data to the inventory table
+    def obtainData(self, type):
+        for row in (self.inventoryDB.getOverviewInventory(type)):
+            name = row[0]
+            totalQuantity = row[1]
+
+            # Inserts data into the table. Each entry is tagged with the name and the type
+            # This is done in order to make identifying the entries easier for when detailed
+            # tables are requested
+            self.tree.insert("", "end", values = (name,totalQuantity), tag= [name, type])
+
+        # Creates a bak function that is used in the displayGeneralInventory functions
+        self.backFunction = self.displayGeneralInventory
+
+        # Binds a double click function to the Treeview table. If an entry is double clicked,
+        # the function displayGeneralInventory is ran
+        self.tree.bind("<Double-1>", self.displayDetailedInventory)
+
+        backButton = Button(root, text="Back", command=lambda: self.sequence(self.viewInveroty))  # This button will return the user to the main page. Still working on it.
+        backButton.place(x = 50, y = 350)
+
+    # Creates table when an entry is double clicked
+    def displayDetailedInventory(self, event):
+        # The selected item's tag are extracted and assigned to name and type
+        itemSelected = self.tree.selection()
+        name = self.tree.item(itemSelected,"tag")[0]
+        type = self.tree.item(itemSelected, "tag")[1]
+
+        for child in root.winfo_children():
+            child.destroy()
+
+        self.createDisplayTable()
+
+        self.obtainDetailedData(name, type)
+
+    # Adds detailed database data to the inventory table
+    def obtainDetailedData(self,name, type):
+        for row in (self.inventoryDB.getDetailedInventory(type, name)):
+            name = row[0]
+            purchaseDate = row[1]
+            Quantity = row[3]
+            Price = row[4]
+            self.tree.insert("", "end", values = (name,purchaseDate,Quantity, Price))
+
+        backButton = Button(root, text="Back", command=lambda: self.sequence(self.backFunction))
+        backButton.place(x = 50, y = 350)
+
+    # Creates the view total cost by month and year buttons
+    def viewTotalCost(self):
+        viewMonth = Button(root, text="View by month", command=lambda: self.sequence(self.viewByMonth))
+        viewMonth.place(x = 120, y = 100)
+
+        viewYear = Button(root, text="View by year", command=lambda: self.sequence(self.viewByYear))
+        viewYear.place(x = 120, y = 150)
+
+        backButton = Button(root, text="Back", command=lambda: self.sequence(self.createOptionButtons))#displayGeneralInventory))  # This button will return the user to the main page. Still working on it.
+        backButton.place(x = 50, y = 350)
+
+    # Creates the options for the user to select a month and year
+    def viewByMonth(self):
+        monthLabel = Label(root, text="Month")
+        yearLabel = Label(root, text="Year")
+
+        self.month = IntVar(self)
+        self.year = IntVar(self)
+
+        numMonths = self.nums(1, 12)
+        numYears = self.nums(2015, 2030)
+
+        self.optionmenu_month = OptionMenu(root, self.month, *numMonths)
+        self.optionmenu_year = OptionMenu(root, self.year, *numYears)
+
+        self.month.set(numMonths[0])
+        self.year.set(numYears[0])
+
+        self.optionmenu_month.place(x = 100, y = 100)
+        self.optionmenu_year.place(x = 150, y = 100)
+
+        monthLabel.place(x = 100, y = 140)
+        yearLabel.place(x = 150, y = 140)
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.viewTotalCost))  # This button will return the user to the expenses option page
+        backButton.place(x = 50, y = 350)
+
+        nextButton = Button(root, text = "Next", command= self.viewTotalCostMonth)#self.viewTotalCostMonth)#self.saveNameAndType(itemName)))#(self.saveNameAndType(itemName)))  # (itemName)))# lambda: self.sequence(self.test))  #This button will send the user to the add inventory page
+        nextButton.place(x = 350, y = 350)
+
+    # Creates database table and inserts the respective values by month and year
+    def viewTotalCostMonth(self):
+        self.createDisplayTable()
+
+        self.totalPrice = 0
+        month = self.month.get()
+        year = self.year.get()
+
+        self.lengthMonth = len(str(month))
+        self.searchDate = str(month) + "/" + str(year)
+
+        InventoryDB = getDatabaseConnection()
+        database = InventoryDB.cursor()
+
+        self.insertData("DetailedTreeInventory", "Tree", database, "Month")
+        self.insertData("DetailedAnimalInventory", "Animal", database, "Month")
+        self.insertData("DetailedMachineInventory", "Machine", database, "Month")
+
+        InventoryDB.close()
+
+        totalPriceLabel = Label(root, text=("Total price for " + calendar.month_name[month] + " in " + str(year) + " is: " + str(self.totalPrice)))
+        totalPriceLabel.place(x = 100, y = 350)
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.viewByMonth))  # This button will return the user to the expenses option page
+        backButton.place(x = 50, y = 350)
+
+    # Creates the option for the user to select the year
+    def viewByYear(self):
+        yearLabel = Label(root, text="Year")
+
+        self.year = IntVar(self)
+
+        numYears = self.nums(2015, 2030)
+
+        self.optionmenu_year = OptionMenu(root, self.year, *numYears)
+
+        self.year.set(numYears[0])
+
+        self.optionmenu_year.place(x = 100, y = 100)
+        yearLabel.place(x = 100, y = 140)
+
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.viewTotalCost))  # This button will return the user to the expenses option page
+        backButton.place(x = 50, y = 350)
+
+        nextButton = Button(root, text = "Next", command= self.viewTotalCostYear)#self.viewTotalCostMonth)#self.saveNameAndType(itemName)))#(self.saveNameAndType(itemName)))  # (itemName)))# lambda: self.sequence(self.test))  #This button will send the user to the add inventory page
+        nextButton.place(x = 350, y = 350)
+
+    # Creates database table and inserts the respective values by year
+    def viewTotalCostYear(self):
+        self.createDisplayTable()
+
+        self.totalPrice = 0
+        year = self.year.get()
+
+        InventoryDB = getDatabaseConnection()
+        database = InventoryDB.cursor()
+
+        self.insertData("DetailedTreeInventory", "Tree", database, "Year")
+        self.insertData("DetailedAnimalInventory", "Animal", database, "Year")
+        self.insertData("DetailedMachineInventory", "Machine", database, "Year")
+
+        totalPriceLabel = Label(root, text="Total price for " + str(year) + " is: " + str(self.totalPrice))
+        totalPriceLabel.place(x = 100, y = 350)
+
+        backButton = Button(root, text = "Back", command=lambda: self.sequence(self.viewByYear))  # This button will return the user to the expenses option page
+        backButton.place(x = 50, y = 350)
+
+    # Inserts the detailed values into the detailed table
+    def insertData(self, table, type, database, yearOrMonth):
+        if yearOrMonth == "Year":
+            for row in database.execute("SELECT * FROM %s" % table ):
+                itemdate = row[1]
+
+                if ( str(self.year.get()) == itemdate[-4:]):
+                    name = row[0]
+                    purchaseDate = row[1]
+                    Quantity = row[3]
+                    Price = row[4]
+
+                    self.tree.insert("", "end", values = (name,purchaseDate,Quantity, Price),tag = [name, type] )
+                    self.totalPrice = self.totalPrice + Price
+
+                self.backFunction = self.viewTotalCostYear
+
+        else:
+            for row in database.execute("SELECT * FROM %s" % table ):
+                itemdate = row[1]
+
+                if (self.searchDate == (itemdate[0:self.lengthMonth] + "/" + itemdate[-4:])):
+                    name = row[0]
+                    purchaseDate = row[1]
+                    Quantity = row[3]
+                    Price = row[4]
+
+                    self.tree.insert("", "end", values = (name,purchaseDate,Quantity, Price), tag = [name, type])
+                    self.totalPrice = self.totalPrice + Price
+
+                self.backFunction = self.viewTotalCostMonth
+
+        # If entry is double clicked, the table will acknoledge the click and display the detailed table
+        self.tree.bind("<Double-1>", self.displayDetailedInventory)
+
+    def createDisplayTable(self):
+        for child in root.winfo_children():
+            child.destroy()
+
+        self.tree = Treeview(height="15", columns=("Name", "Purchase Date", "Quantity", "Price"))#, "Description"))
+        self.tree.pack()
+        self.tree.heading('#1', text = "Name",          anchor = CENTER)
+        self.tree.heading('#2', text = "Purchase Date", anchor = CENTER)
+        self.tree.heading('#3', text = "Quantity",      anchor = CENTER)
+        self.tree.heading('#4', text = "Price",         anchor = CENTER)
+        self.tree.column('#1', minwidth=0, width = 95)
+        self.tree.column('#2', minwidth=0, width = 95)
+        self.tree.column('#3', minwidth=0, width = 95)
+        self.tree.column('#4', minwidth=0, width = 95)
+        self.tree.column('#0', minwidth=0, width = 0)
+
+
+
+
+    # This is a helper function that will delete the current widgets of the frame
+    def sequence(self, run):
+        for child in root.winfo_children():
+            child.destroy()
+        run()
+
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
+        self.place();
+        self.inventoryDB = InventoryDatabase()
+        # self.inventoryDB.createTable()
+        self.createOptionButtons()
+
+def runExpeneseClass():
+    Expenses(root)
 
 class income(Frame):                                              #<income> class created for <income> page when <income> button is pressed at the main menu
    def __init__(self,master = None):
@@ -298,6 +773,6 @@ class records_gui_class(Frame):                                              #<r
         database2.close(); # closes database
 
 root = Tk()
-root.geometry("1000x1000")
+root.geometry("400x400")
 HomeScreenApp = HomeScreen(root)
 HomeScreenApp.mainloop()
