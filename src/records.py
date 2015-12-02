@@ -18,7 +18,7 @@ class records:#Records class that takes information and stores/removes informati
         self.month = None;
         self.year = None;
 
-    def create_database_employees():
+    def create_database_employees(self):
         database = sqlite3.connect('records_information_employees.db');#connects to database employees
         c = database.cursor();
         #Creates table employee that holds all the desired characteristics/ variables
@@ -26,7 +26,7 @@ class records:#Records class that takes information and stores/removes informati
         database.commit();
         database.close();    #closes database
   
-    def create_database_sales():#connects to database sales
+    def create_database_sales(self):#connects to database sales
         database = sqlite3.connect('records_information_sales.db');#connects to database with sales information
         c = database.cursor();
         #Creates table sale that holds sale records and can be used for further analysis 
@@ -34,7 +34,7 @@ class records:#Records class that takes information and stores/removes informati
         database.commit();
         database.close();    #closes database
         
-    def view_sales_records():#Prints out the sales records for each year
+    def view_sales_records(self):#Prints out the sales records for each year
         database = sqlite3.connect('records_information_sales.db');
         c = database.cursor();
         print("All Contained Records of Sales in Database: \n")
@@ -44,7 +44,7 @@ class records:#Records class that takes information and stores/removes informati
             print(row);                                               #prints row by row as loop is commenced 
         database.close();    #closes database
         
-    def view_records_employees():#function to view all employees and their information and prints out information
+    def view_records_employees(self):#function to view all employees and their information and prints out information
         database = sqlite3.connect('records_information_employees.db');
         c = database.cursor();
         print("All Recorded Information on Employees:");
@@ -53,7 +53,7 @@ class records:#Records class that takes information and stores/removes informati
             print(row);                                                    #prints row <all data contained in row>
         database.close();    #closes database
         
-    def delete_database(table_name):#deletes a database 
+    def delete_database(self,table_name):#deletes a database 
         database = sqlite3.connect('records_information_employees.db'); #connects to database with employee info
         database2 = sqlite3.connect('records_information_sales.db');    #connects to database with sales info
         c = database.cursor();                      #Drops table created
@@ -69,7 +69,7 @@ class records:#Records class that takes information and stores/removes informati
         database.close();    #closes the database
         database2.close();   #closes second database
         
-    def store_employee(id_num, employee_name, phone_num, job_t, email_address, year_joined):#stores employee into database
+    def store_employee(self,id_num, employee_name, phone_num, job_t, email_address, year_joined):#stores employee into database
         database = sqlite3.connect('records_information_employees.db');
         c = database.cursor();
         c.execute('''INSERT INTO employees( id , name , phone , job_type , email, year_joined ) VALUES (?,?,?,?,?,?)''',
@@ -79,14 +79,14 @@ class records:#Records class that takes information and stores/removes informati
         print("Employee Recorded");
         database.close();    #closes database
         
-    def store_sale(sale_num, sale_type, quantity, price, total_cost, year ):#stores sale into database 
+    def store_sale(self,sale_num, sale_type, quantity, price, total_cost, year ):#stores sale into database 
         database = sqlite3.connect('records_information_sales.db');
         c = database.cursor();
         c.execute(''' INSERT INTO sale(id, Sale_type, quantity, price_per, cost, year) VALUES (?,?,?,?,?,?)''', (sale_num, sale_type, quantity, price, total_cost, year));
         database.commit();    
         database.close();    #closes database
         
-     def compare_sales_records():#Allows comparison between different years of sales
+     def compare_sales_records(self):#Allows comparison between different years of sales
         
         def calculate_cost(cost_list): #calculates cost and acts as a helper function to calculate total costs of a given year 
             total_cost = 0;                             #sets total cost to zero
@@ -135,28 +135,28 @@ class records:#Records class that takes information and stores/removes informati
 
         database.close();    #closes database
         
-    def create_database_payroll():                                                  #creates database payroll that will store payroll for employees
+    def create_database_payroll(self):                                                  #creates database payroll that will store payroll for employees
         database = sqlite3.connect('payroll.db');
         c = database.cursor();
         c.execute('''CREATE TABLE payroll (name TEXT, year TEXT, salary INTEGER) ''');
         database.commit();
         database.close();
 
-    def store_employee_with_salary(name_employee, year_paid, salary_amount):        #stores a single set of data relating to one individual's salary for a year
+    def store_employee_with_salary(self,name_employee, year_paid, salary_amount):        #stores a single set of data relating to one individual's salary for a year
         database = sqlite3.connect('payroll.db');
         cursor = database.cursor();
         cursor.execute('''INSERT INTO payroll(name, year, salary) VALUES (?,?,?) ''',(name_employee, year_paid, salary_amount));
         database.commit();
         database.close();
 
-    def delete_payroll_database():
+    def delete_payroll_database(self):
         database = sqlite3.connect('payroll.db');
         c = database.cursor();
         c.execute('''DROP TABLE payroll ''');
         database.commit();
         database.close();
         
-    def print_payroll_from_designated_year(year):                                   #Prints the salary for a year based on what year user inputs 
+    def print_payroll_from_designated_year(self,year):                                   #Prints the salary for a year based on what year user inputs 
         database = sqlite3.connect('payroll.db');
         controller = database.cursor();
 
