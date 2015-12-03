@@ -1,0 +1,25 @@
+Employee Class File: 
+  Contains the constructor for Employee which consist of Name, Number, Email, Position, and Salary
+  Contains five functions to print the information.
+  
+Employee Database Class File:
+  Contains the function DatabaseConnection which connects to the Database
+  The next four functions are to create the database, insert to, retrieve from, and delete.
+  
+GUI Class File
+  Imports both Class files into it and this class creates the Graphical User Interface of the application.
+  
+  CreateOptions function creates the first window you will see when you click on the Employee's Button in the Main Menu, in this window
+  there will be three buttons, Add Employee, View Current Employees, and Back.
+  
+  If Add Employee is selected, then you call upon the addEmployee function which takes you to a new window that has 5 labels and 5 entries
+  for all of the data that needs to be inputted. At the bottom there will also be two buttons, a Back button and a save button.
+  
+  If save is clicked, then we go to the saveEmployeeData function. This function will save all of the data that was entered for the
+  Employee.
+  
+  Next, the Function Confirmation will be called which brings up a new window showing you the values you entered for each of the entries, 
+  then an option to confirm or go back to Add employee. 
+  
+  View Current Employees, will bring up a window that shows all of the Current Employees in the company in a list ordered by name.
+  
