@@ -771,6 +771,68 @@ class records_gui_class(Frame):                                              #<r
         back_button.place(x = 500 , y = 500 );
         
         database2.close(); # closes database
+    
+    def create_database_payroll(self):                    #creates database function for payroll
+        print('Creating Database...');
+        Records.create_database_payroll();
+        print('Database Created');
+
+    def destroy_database_payroll(self):                   #destroys/removes the database for payroll
+        Records.delete_payroll_database();
+        print('Database Deleted');
+
+    def storeEandsalary(self, ne, yp, sa ):               #stores an employee with the salary and year given
+        Records.store_employee_with_salary(ne, yp, sa);
+        print('Salary/Employee Stored');
+
+    def search_salary_year(self,y):                       #function calls from record's class a search function to search and add up payroll for a year/date given
+        Records.print_payroll_from_designated_year(y);
+        
+    def payroll_page(self, master = None):#payroll page that contains all the widgets and functionalities associated with payroll
+        Frame.__init__(self, master);
+        self.master.title("Payroll");
+        #Button: that creates a new database for payroll (employee with salary information)
+        payroll_button_database_create = Button(master, text = "Payroll: Create Database", command = lambda: self.create_database_payroll())
+        payroll_button_database_create.place(x = 300, y = 300);
+
+        #Button: deletes database for payroll
+        payroll_delete_database = Button(master, text = "Payroll: Delete Database", command = lambda: self.destroy_database_payroll())
+        payroll_delete_database.place(x = 300, y = 350);
+
+
+        #Labels/Entries for input for storeing salary for payroll
+        name = Label(master, text = "Employee Name");
+        name.place(x = 50, y = 110);
+        entry1 = Entry(master)
+        entry1.place(x = 150, y = 110);
+
+        year_paid = Label(master, text = "Year For Payment");
+        year_paid.place(x = 50, y = 140);
+        entry2 = Entry(master)
+        entry2.place(x = 150, y = 140);
+
+        salary_amount = Label(master, text = "Salary");
+        salary_amount.place(x = 50, y = 170);
+        entry3 = Entry(master)
+        entry3.place(x = 150, y = 170);
+        
+        #Button: Store Employee with Salary
+        store_salary = Button(master, text = "Store Salary", command = lambda: self.storeEandsalary((entry1.get()),(entry2.get()),(entry3.get())))
+        store_salary.place(x = 100, y = 200)
+
+        #label/entry widget for payroll year functionality
+        payroll_y = Label(master, text = 'Enter Year:')
+        payroll_y.place(x = 250, y = 200);
+        entrypayroll = Entry(master);
+        entrypayroll.place(x = 350, y = 200);
+        
+        #Button that will reach functionality to print payroll based on an inserted year
+        payroll_year = Button(master, text = "Enter Year", command = lambda: self.search_salary_year(entrypayroll.get()));
+        payroll_year.place(x = 250, y = 250);
+        
+        #Back button to menu of records page
+        back_button = Button(master, text = "Back", command = lambda: self.sequence(self.__init__))
+        back_button.place(x = 500 , y = 500 );
 
 root = Tk()
 root.geometry("400x400")
