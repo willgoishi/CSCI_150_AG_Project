@@ -19,45 +19,44 @@ class Employees(Frame):
 
     # Creates the buttons for the first window
     def createButtons(self):
-        addEmployee = Button(root, text="Add Employee", command = lambda: self.sequence(self.addEmployee)) # Add Employee Button, Incomplete
+        addEmployee = Button(root, text="Add Employee", command = lambda: self.sequence(self.addEmployee)) # Add Employee Button
         addEmployee.place(x = 110, y = 100)
 
-        currentEmployeesButton = Button(root, text="View Current Employees")  # Button to view current Employees, Inc
+        currentEmployeesButton = Button(root, text="View Current Employees")  # Button to view current Employee
         currentEmployeesButton.place(x = 110, y = 140)
 
-        backButton = Button(root, text="Back")  # This button will take the user back to the last window, Incomplete
+        backButton = Button(root, text="Back")  # This button will take the user back to the last window
         backButton.place(x = 110, y = 180)
 
-    # Creates the addEmployee Button and Entries when you select addEmployee
+    # The addEmployee window with all the Employee Info Entries
     def addEmployee(self):
         self.master.title("Add new Employee")  # Title Change to Add New Employee
         employeeName = Label(root, text="Name of Employee: ") # Label for the Name of Employee entry
         employeeName.place(x = 110, y = 30)
-        self.name = Entry(root, bd=5)  # Where the user will input employee name
+        self.name = Entry(root, bd=5)  # Entry for employee name
         self.name.place(x = 110, y = 60)
-        employeeNumber = Label(root, text="Phone Number of Employee: ")
+        employeeNumber = Label(root, text="Phone Number of Employee: ") # Label for Employee Number
         employeeNumber.place(x = 110, y = 110)
-        self.number = Entry(root, bd=5)
+        self.number = Entry(root, bd=5) # Entry for employee number
         self.number.place(x = 110, y = 140)
         employeeEmail = Label(root, text="Email of Employee: ") # Label for the Email Entry
         employeeEmail.place(x = 110, y = 190)
-        self.email = Entry(root, bd=5)
+        self.email = Entry(root, bd=5) # Entry for employee email
         self.email.place(x = 110, y = 210)
         employeePosition = Label(root, text="Position of Employee: ") # Label for the Position Entry
         employeePosition.place(x = 110, y = 260)
-        self.position = Entry(root, bd=5)
+        self.position = Entry(root, bd=5) # Entry for employee position
         self.position.place(x = 110, y = 290)
         employeeSalary = Label(root, text="Salary of Emploee: ") # Label for the Salary Entry
         employeeSalary.place(x = 110, y = 340)
-        self.salary = Entry(root, bd=5)
+        self.salary = Entry(root, bd=5) # Entry for the salary
         self.salary.place(x = 110, y = 370)
-        # Back button
-        backButton = Button(root, text="Back", command=lambda: self.sequence(self.createButtons))
+        backButton = Button(root, text="Back", command=lambda: self.sequence(self.createButtons)) # Back Button
         backButton.place(x = 110, y = 420)
-        # Save button
-        saveButton = Button(root, text="Save Employee", command= self.saveEmployeeData)
+        saveButton = Button(root, text="Save Employee", command= self.saveEmployeeData) # Save Entries for Employee
         saveButton.place(x = 187, y = 420)
 
+    # Function to save the entries
     def saveEmployeeData(self):
         self.employeeName = self.name.get()
         self.employeeNumber = self.number.get()
@@ -66,22 +65,24 @@ class Employees(Frame):
         self.employeeSalary = self.salary.get()
         self.sequence(self.confirmation)
 
+    # Function to confirm the entries
     def confirmation(self):
-        nameLabel = Label(root,text="%s" % self.employeeName)
+        nameLabel = Label(root,text="%s" % self.employeeName) # Label for Name
         nameLabel.place(x = 110, y = 30)
-        numberLabel = Label(root, text="%s" % self.employeeNumber)
+        numberLabel = Label(root, text="%s" % self.employeeNumber) # Label for Number
         numberLabel.place(x = 110, y = 60)
-        emailLabel = Label(root, text="%s" % self.employeeEmail)
+        emailLabel = Label(root, text="%s" % self.employeeEmail) # Label for Email
         emailLabel.place(x = 110, y = 90)
-        positionLabel = Label(root, text="%s" % self.employeePosition)
+        positionLabel = Label(root, text="%s" % self.employeePosition) # Label for Position
         positionLabel.place(x = 110, y = 120)
-        salaryLabel = Label(root, text="%s" % self.employeeSalary)
+        salaryLabel = Label(root, text="%s" % self.employeeSalary) # Label for Salary
         salaryLabel.place(x = 110, y = 150)
-        backButton = Button(root, text="Back", command = lambda: self.sequence(self.addEmployee))
+        backButton = Button(root, text="Back", command = lambda: self.sequence(self.addEmployee)) # Back Button
         backButton.place(x = 110, y = 200)
-        confirmButton = Button(root, text="Confirm", command = self.confirmationSave)
+        confirmButton = Button(root, text="Confirm", command = self.confirmationSave) # Confirm Button
         confirmButton.place(x = 187, y = 200)
 
+    # Saves the entries to the database
     def confirmationSave(self):
         newEmployee = Employee(self.employeeName)
         newEmployee.number = self.employeeNumber
@@ -93,12 +94,12 @@ class Employees(Frame):
         print ("Save Successful")
         print (EmployeesDatabase.retrieve_data(self))
 
+
     # This is a helper function that will delete the current widgets of the frame
     def sequence(self, run):
         for child in root.winfo_children():
             child.destroy()
         run()
-
 
 root = Tk()
 root.geometry("500x500")
