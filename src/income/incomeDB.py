@@ -1,32 +1,27 @@
 import sqlite3
 
 def ConnectDatabase():
-        return sqlite3.connect('itemDB.db'); 
+        return sqlite3.connect('IncomeDatabase.db') 
     
 class incomeDB():
-    def createDB(self):
         database = ConnectDatabase()  
         item = database.cursor()
-        item.execute('''CREATE TABLE IncomeDatabase
-                      (Month TEXT, Item TEXT, Amount INTEGER, Price INTEGER, Income INTEGER)''')
-        database.commit()
-        database.close()
 
-    def insertIntoDB(self, data):
-        database = DatabaseConnection()
-        item = database.cursor()
-        item.execute('''
-            INSERT INTO IncomeDatabase ( Month, Item, Amount, Price, Income) VALUES (?, ?, ?, ?, ?)''',
-            (data.month, data.item, data.amount, data.price, data.income))
-        database.commit()
-        database.close()
+        def createDB(self):
+                self.item.execute('''CREATE TABLE IncomeDatabase (Month INTEGER, Year INTEGER, Amount INTEGER, Income INTEGER)''')
+                database.commit()
+                database.close()
 
-    def getInfo(self):
-        database = ConnectDatabase()
-        item = database.cursor()
-        info = item.execute('SELECT * FROM IncomeDatabase ORDER BY Month')
-        return info
+        def insertIntoDB(self, data):
+                self.database = ConnectDatabase()
+                self.item = self.database.cursor()
+                self.item.execute('''INSERT INTO IncomeDatabase ( Month, Year, Amount, Income) VALUES (?, ?, ?, ?)''',
+                             (data.month, data.year, data.amount, data.income))
+                self.database.commit()
+                self.database.close()
 
-    
-
-    
+        def getInfo(self):
+                self.database = ConnectDatabase()
+                self.item = self.database.cursor()
+                info = self.item.execute('SELECT * FROM IncomeDatabase ORDER BY Year, Month')
+                return info
