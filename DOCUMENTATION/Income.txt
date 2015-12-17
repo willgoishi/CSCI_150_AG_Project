@@ -1,0 +1,13 @@
+income.py:
+  Contains the constructors for class Income. Constructors are month, year, amount, income.
+
+main.py:
+  main.py currently not necessary.
+  
+incomeDB:
+  Contains the class incomeDB, primarily used to create a database, add into a database, and to read the database.
+  
+incomeGUI:
+  Contains the GUI for the application needed to run the functionalities of Income. 
+  Allows the adding of income into the database, or the viewing of added income.
+    
