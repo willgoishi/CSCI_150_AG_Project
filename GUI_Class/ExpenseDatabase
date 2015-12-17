@@ -11,27 +11,27 @@ class InventoryDatabase():
     def createTable(self):
 
         def createGeneralTreeTable(self):
-            self.database.execute('''CREATE TABLE GeneralTreeInventory
+            self.database.execute('''CREATE TABLE IF NOT EXISTS GeneralTreeInventory
                         (Name TEXT, TotalQuantity INTEGER)''')
 
         def createDetailedTreeTable(self):
-            self.database.execute('''CREATE TABLE DetailedTreeInventory
+            self.database.execute('''CREATE TABLE IF NOT EXISTS DetailedTreeInventory
                         (Name TEXT, PurchaseDate TEXT, DateUsed TEXT, Quantity INTEGER, Price INTEGER, Description TEXT)''')
 
         def createGeneralAnimalTable(self):
-            self.database.execute('''CREATE TABLE GeneralAnimalInventory
+            self.database.execute('''CREATE TABLE IF NOT EXISTS GeneralAnimalInventory
                         (Name TEXT, TotalQuantity INTEGER)''')
 
         def createDetailedAnimalTable(self):
-            self.database.execute('''CREATE TABLE DetailedAnimalInventory
+            self.database.execute('''CREATE TABLE IF NOT EXISTS DetailedAnimalInventory
                         (Name TEXT, PurchaseDate TEXT, DateUsed Text, Quantity INTEGER, Price INTEGER, Description TEXT)''')
 
         def createGeneralMachineTable(self):
-            self.database.execute('''CREATE TABLE GeneralMachineInventory
+            self.database.execute('''CREATE TABLE IF NOT EXISTS GeneralMachineInventory
                         (Name TEXT, TotalQuantity INTEGER)''')
 
         def createDetailedMachineTable(self):
-            self.database.execute('''CREATE TABLE DetailedMachineInventory
+            self.database.execute('''CREATE TABLE IF NOT EXISTS DetailedMachineInventory
                         (Name TEXT, PurchaseDate TEXT, DateUsed TEXT, Quantity INTEGER, Price INTEGER, Description TEXT)''')
 
         #These three functions call on the above functions and generate the database
@@ -43,7 +43,6 @@ class InventoryDatabase():
         createDetailedMachineTable(self)
 
         self.InventoryDB.commit()
-        self.InventoryDB.close()
 
     #Function that will read the inventory stored in the databases
     def getOverviewInventory(self, type):
@@ -149,4 +148,3 @@ class InventoryDatabase():
 
         self.InventoryDB.commit()
         self.InventoryDB.close()
-
