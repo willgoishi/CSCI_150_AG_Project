@@ -515,7 +515,7 @@ class Expenses(Frame):
             for row in database.execute("SELECT * FROM %s" % table ):
                 itemdate = row[1]
 
-                if (self.searchDate == (itemdate[0:self.lengthMonth] + "/" + itemdate[-4:])):
+                if (self.searchDate == (itemdate[0:(self.lengthMonth + 1)] + itemdate[-4:])):
                     name = row[0]
                     purchaseDate = row[1]
                     Quantity = row[3]
@@ -544,9 +544,6 @@ class Expenses(Frame):
         self.tree.column('#3', minwidth=0, width = 95)
         self.tree.column('#4', minwidth=0, width = 95)
         self.tree.column('#0', minwidth=0, width = 0)
-
-
-
 
     # This is a helper function that will delete the current widgets of the frame
     def sequence(self, run):
